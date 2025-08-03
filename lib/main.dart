@@ -4,15 +4,12 @@ import 'screens/home_screen.dart';
 import 'services/database_service.dart';
 import 'services/storage_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final storageService = await StorageService.init();
-  
+void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DatabaseService()),
-        ChangeNotifierProvider(create: (_) => storageService),
+        Provider(create: (_) => StorageService()), // Simple provider, not ChangeNotifier
       ],
       child: const MyApp(),
     ),

@@ -31,7 +31,21 @@ class DatabaseService extends ChangeNotifier {
     }
   }
 
-  Future<void> sendNotificationsData(Map<String, dynamic> data) async {
-    // Implementation
+  Future<Map<String, dynamic>> sendNotificationsData(Map<String, dynamic> data) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://apinoti.thenett0.com/sendNotificationsData'),
+        body: json.encode(data),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
   }
 }
