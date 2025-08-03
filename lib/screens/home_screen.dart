@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<TextEditingController> _colorControllers = [];
   final List<TextEditingController> _sequenceControllers = [];
   bool _isEditingExisting = false;
-
+  final TextEditingController _videoDurationController = TextEditingController();
 
   // Keys para SharedPreferences
   static const String _configKey = 'app_config';
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Llenar los campos del formulario
         _transitionTimeController.text = config['transitionTime']?.toString() ?? '';
         _cyclesController.text = config['cicles']?.toString() ?? '';
-
+        _videoDurationController.text = config['videoDuration']?.toString() ?? ''; // New line
         // Configurar los inputs dinámicos de colores
         _selectNumber = _colorOptions.length;
         _colorControllers.clear();
@@ -209,6 +209,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         return null;
                       },
                     ),
+
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _videoDurationController,
+                      decoration: const InputDecoration(
+                        labelText: 'Duración de video (s)',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Duración requerida';
+                        }
+                        if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                          return 'Duración inválida';
+                        }
+                        return null;
+                      },
+                    ),
+
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _cyclesController,
@@ -559,7 +579,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_formKey.currentState!.validate()) {
       final output = {
         'transitionTime': _transitionTimeController.text,
+        'videoDuration': _videoDurationController.text, // New field
         'cicles': _cyclesController.text,
+
         'color': List<Map<String, dynamic>>.generate(
           _colorControllers.length,
               (index) => {
