@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:myfrontflutter/services/database_service.dart';
 import 'package:myfrontflutter/services/storage_service.dart';
+import 'counter_screen.dart'; // Nueva importación
+import 'video_iist_screen.dart'; // Nueva importación para videos
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -544,30 +546,75 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showMenuOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: const Text(
+                  'Menú de Navegación',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.home, color: Colors.blue),
+                title: const Text('Inicio'),
+                subtitle: const Text('Volver a la pantalla principal'),
+                onTap: () {
+                  Navigator.of(context).pop(); // Cerrar el modal
+                  // Ya estamos en Home, no necesitamos navegar
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.video_library, color: Colors.green),
+                title: const Text('Videos Guardados'),
+                subtitle: const Text('Ver todos los videos grabados'),
+                onTap: () {
+                  Navigator.of(context).pop(); // Cerrar el modal
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const VideoListScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
   void _startSequence() {
     if (_usersSequences.isNotEmpty) {
-      final req = {
+      // Crear configuración para la grabación
+      final recordingConfig = {
         'date': DateTime.now().toString(),
-        'cicles': _cyclesController.text,
+        'cycles': _cyclesController.text,
         'transitionTime': _transitionTimeController.text,
+        'videoDuration': _videoDurationController.text,
         'usersSequences': _usersSequences,
       };
 
-      print("envioTest: $req");
-
-      _databaseService.sendNotificationsData(req).then((rpta) {
-        if (rpta['code'] == "OK") {
-          final stats = rpta['stats'];
-          final msm = 'Se envió correctamente a ${stats['success']}/${stats['total']}';
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(msm)),
-          );
-        }
-      }).catchError((err) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Error")),
-        );
-      });
+      // Navegar a la pantalla de contador
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CounterScreen(
+            recordingConfig: recordingConfig,
+          ),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No hay usuarios para enviar secuencia")),
@@ -727,7 +774,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.menu),
-            onPressed: () {},
+            onPressed: _showMenuOptions,
           ),
         ],
         bottom: PreferredSize(
