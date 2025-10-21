@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+// NUEVO: Importar el paquete para compartir
+import 'package:share_plus/share_plus.dart';
 import 'video_player_screen.dart';
 
 class VideoListScreen extends StatefulWidget {
@@ -52,6 +54,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
   }
 
   void _showError(String message) {
+    if (!mounted) return; // Asegurarse que el widget esté montado
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -117,6 +120,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
     try {
       await file.delete();
       _loadVideoFiles(); // Recargar la lista
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Video eliminado')),
       );
@@ -149,6 +153,26 @@ class _VideoListScreenState extends State<VideoListScreen> {
       },
     );
   }
+
+  // NUEVO: Función para compartir el video
+  Future<void> _shareVideo(File file) async {
+    try {
+      final fileName = file.path.split('/').last;
+      final formattedName = _formatFileName(fileName);
+
+      // El paquete share_plus funciona con XFile
+      final xFile = XFile(file.path);
+
+      await Share.shareXFiles(
+        [xFile],
+        text: 'Mira este video: $formattedName',
+        subject: 'Video grabado: $formattedName', // Asunto para emails
+      );
+    } catch (e) {
+      _showError('Error al compartir video: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -261,12 +285,26 @@ class _VideoListScreenState extends State<VideoListScreen> {
                 ],
               ),
               trailing: PopupMenuButton<String>(
+                // MODIFICADO: Añadido el 'else if' para compartir
                 onSelected: (value) {
                   if (value == 'delete') {
                     _showDeleteDialog(file);
+                  } else if (value == 'share') {
+                    _shareVideo(file);
                   }
                 },
+                // MODIFICADO: Añadido el PopupMenuItem para 'share'
                 itemBuilder: (BuildContext context) => [
+                  const PopupMenuItem<String>(
+                    value: 'share',
+                    child: Row(
+                      children: [
+                        Icon(Icons.share, color: Colors.blue),
+                        SizedBox(width: 8),
+                        Text('Compartir'),
+                      ],
+                    ),
+                  ),
                   const PopupMenuItem<String>(
                     value: 'delete',
                     child: Row(

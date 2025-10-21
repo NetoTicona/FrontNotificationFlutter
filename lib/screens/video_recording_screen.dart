@@ -91,7 +91,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
 
       // Generar nombre del archivo con fecha y milisegundos
       final now = DateTime.now();
-      final fileName = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}_${now.millisecond.toString().padLeft(3, '0')}.mp4';
+      //final fileName = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}_${now.millisecond.toString().padLeft(3, '0')}.mp4';
+      // NUEVO (con guiones bajos):
+      final fileName = '${now.year}_${now.month.toString().padLeft(2, '0')}_${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}_${now.minute.toString().padLeft(2, '0')}_${now.second.toString().padLeft(2, '0')}_${now.millisecond.toString().padLeft(3, '0')}.mp4';
       _videoPath = path.join(documentsDir.path, fileName);
 
       // Iniciar grabación
