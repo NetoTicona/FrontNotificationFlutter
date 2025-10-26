@@ -4,10 +4,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'screens/home_screen.dart';
 import 'services/database_service.dart';
 import 'services/storage_service.dart';
+import 'dart:io'; // <-- 1. IMPORTAR
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  HttpOverrides.global = MyHttpOverrides();
   // Solicitar permisos al inicio
   await _requestPermissions();
 
@@ -58,5 +59,14 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomeScreen(),
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
