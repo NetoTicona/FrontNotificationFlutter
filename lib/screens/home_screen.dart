@@ -644,6 +644,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _isConfigSaved = true;
         _colorOptions = (output['color'] as List).cast<Map<String, dynamic>>();
       });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Configuración guardada')),
+    );
     }
   }
 
