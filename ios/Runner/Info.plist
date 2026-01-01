@@ -29,6 +29,16 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+
+
+<key>NSCameraUsageDescription</key>
+    <string>Esta app necesita acceso a la cámara para grabar los videos de la secuencia.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Esta app necesita acceso al micrófono para grabar audio en los videos.</string>
+
+
+
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
