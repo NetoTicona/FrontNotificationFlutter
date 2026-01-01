@@ -170,6 +170,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
         'date': DateTime.now().toString(),
         'cicles': widget.config['cycles'] ?? '',
         'transitionTime': widget.config['transitionTime'] ?? '',
+        'preamble': widget.config['preamble'] ?? '',
+        'preambleCycles': widget.config['preambleCycles'] ?? '',
         'usersSequences': widget.config['usersSequences'],
       };
 

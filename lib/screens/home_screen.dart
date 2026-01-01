@@ -37,6 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _idDeviceController = TextEditingController();
   final List<TextEditingController> _colorControllers = [];
   final List<TextEditingController> _sequenceControllers = [];
+  final TextEditingController _preambleController = TextEditingController(); 
+  final TextEditingController _preambleCyclesController = TextEditingController();
+
   bool _isEditingExisting = false;
   final TextEditingController _videoDurationController = TextEditingController();
 
@@ -115,7 +118,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _transitionTimeController.text = config['transitionTime']?.toString() ?? '';
         _cyclesController.text = config['cicles']?.toString() ?? '';
         _videoDurationController.text = config['videoDuration']?.toString() ?? ''; // New line
+        
         // Configurar los inputs dinámicos de colores
+        _preambleController.text = config['preamble']?.toString() ?? '';
+        _preambleCyclesController.text = config['preambleCycles']?.toString() ?? '';
         _selectNumber = _colorOptions.length;
         _colorControllers.clear();
         for (var colorObj in _colorOptions) {
@@ -245,6 +251,49 @@ class _HomeScreenState extends State<HomeScreen> {
                         return null;
                       },
                     ),
+
+
+                    const SizedBox(height: 16),
+                    // CAMPO PREAMBLE
+                    TextFormField(
+                      controller: _preambleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Preámbulo (Binario)',
+                        hintText: 'Ej: 0011, 010101',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Requerido';
+                        // Opcional: Validar que solo sean 0s y 1s
+                        if (!RegExp(r'^[01]+$').hasMatch(value)) return 'Solo 0 y 1';
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+                    // CAMPO PREAMBLE CYCLES
+                    TextFormField(
+                      controller: _preambleCyclesController,
+                      decoration: const InputDecoration(
+                        labelText: 'Ciclos del Preámbulo',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Requerido';
+                        return null;
+                      },
+                    ),
+
+
+
+
+
+
+
+
+
+
                   ],
                 ),
               ),
@@ -605,6 +654,9 @@ class _HomeScreenState extends State<HomeScreen> {
         'transitionTime': _transitionTimeController.text,
         'videoDuration': _videoDurationController.text,
         'usersSequences': _usersSequences,
+
+        'preamble': _preambleController.text,
+        'preambleCycles': _preambleCyclesController.text,
       };
 
       // Navegar a la pantalla de contador
@@ -628,6 +680,8 @@ class _HomeScreenState extends State<HomeScreen> {
         'transitionTime': _transitionTimeController.text,
         'videoDuration': _videoDurationController.text, // New field
         'cicles': _cyclesController.text,
+        'preamble': _preambleController.text,
+        'preambleCycles': _preambleCyclesController.text,
 
         'color': List<Map<String, dynamic>>.generate(
           _colorControllers.length,
